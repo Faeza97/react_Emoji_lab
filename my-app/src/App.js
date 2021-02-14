@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import axios from 'axios';
+import Emoji from './Emoji';
+function Dashboard() {
+  const [data, setData] = useState();
+  const [input, setInput] = useState([]);
+  const [render, setRender] = useState(false);
 
-function App() {
+  async function fetchData() {
+    const result = await axios.get(
+      `https://emoji-api.com/emojis?search=${input}&access_key=ba15ae726d9e4861773262af4886828dc94ec95e`,
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
+    );
+    setData(result.data);
+    setRender(true);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input onChange={(e) => setInput(e.target.value)}></input>
+      <button onClick={fetchData} id="Search">
+        Find Emoji
+      </button>
+
+      {render ? <Emoji data={data} /> : ''}
     </div>
   );
 }
 
-export default App;
+export default Dashboard;
